@@ -1,7 +1,15 @@
 require 'spec_helper'
 
 describe MundipaggV1Sdk do
-  it "should create card" do
-    expect{MundipaggV1Sdk::create_card}.to output('Card Created').to_stdout
+  let(:user) do
+    {
+      email: "user@example.com"
+    }
+  end
+  it "should create customer" do
+    expect{ MundipaggV1Sdk::Customer.create(nil) }.to output('Card Created').to_stdout
+  end
+  it "should create customer" do
+    expect{ MundipaggV1Sdk::Customer.create(user) }.to output('Card Created').to_stdout
   end
 end
