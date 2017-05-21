@@ -1,0 +1,20 @@
+/mundipagg_v1-*.gem
+/Gemfile.lock
+.rvmrc
+Gemfile.lock
+tags
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*.log
+/tmp
+.DS_Store
+.ruby-version
+.ruby-gemset
+public/uploads
+# Ignore application configuration
+.env
+/coverage/*
+dump.rdb
