@@ -73,7 +73,7 @@ module MundipaggV1Sdk
     err_response = JSON.load(err.response)
     puts err_response["message"]
     puts JSON.pretty_generate(err_response["errors"])
-    # raise(::Exception.new(err))
+    raise(::Exception.new( err_response["message"] ))
   end
 
 end
