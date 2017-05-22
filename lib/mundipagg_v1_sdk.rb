@@ -63,7 +63,9 @@ module MundipaggV1Sdk
       response = err.response
     end
 
-    JSON.load response
+    v = JSON.load response
+    return v["data"] if v["data"] != nil
+    return v
   rescue JSON::ParserError => err
     response
   end
@@ -86,7 +88,7 @@ class MundipaggV1Sdk::Customer
     customer = {} if customer == nil
     postRequest(customer.to_json, "/customers")
   end
-  
+
   def self.retrieve(customer_id)
     ArgumentError.new("Customer id should be a String") if customer_id == nil
     getRequest("/customers/#{customer_id}")
@@ -98,14 +100,26 @@ class MundipaggV1Sdk::Card
 
   extend MundipaggV1Sdk
 
-  def self.create(card)
+  def self.create(customer_id, card)
     card = {} if card == nil
-    postRequest(card.to_json, "/customers/#{card.customer.id}/cards")
+    postRequest(card.to_json, "/customers/#{customer_id}/cards")
   end
-  
-  def self.retrieve(card)
-    ArgumentError.new("Card can't be nil") if charge_id == nil
-    getRequest("/customers/#{card.customer.id}/cards/#{card.id}")
+
+  def self.retrieve(customer_id, card_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    ArgumentError.new("Card can't be nil") if card_id == nil
+    getRequest("/customers/#{customer_id}/cards/#{card_id}")
+  end
+
+  def self.list(customer_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    getRequest("/customers/#{customer_id}/cards")
+  end
+
+  def self.delete(customer_id, card_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    ArgumentError.new("Card id should be a String") if card_id == nil
+    deleteRequest("/customers/#{customer_id}/cards/#{card_id}")
   end
 
 end
@@ -118,7 +132,7 @@ class MundipaggV1Sdk::Charge
     charge = {} if charge == nil
     postRequest(charge.to_json, "/charges")
   end
-  
+
   def self.retrieve(charge_id)
     ArgumentError.new("Charge id should be a String") if charge_id == nil
     getRequest("/charges/#{charge_id}")
@@ -134,7 +148,7 @@ class MundipaggV1Sdk::Plan
     plan = {} if plan == nil
     postRequest(plan.to_json, "/plans")
   end
-  
+
   def self.retrieve(plan_id)
     ArgumentError.new("Plan id should be a String") if plan_id == nil
     getRequest("/plans/#{plan_id}")
