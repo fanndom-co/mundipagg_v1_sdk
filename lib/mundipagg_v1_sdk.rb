@@ -7,7 +7,7 @@ module MundipaggV1Sdk
   @@end_point = "https://api.mundipagg.com/core/v1"
 
   @@SERVICE_HEADERS = {
-    :Authorization  => "Basic #{::Base64.encode64("#{ENV['MUNDIPAGG_SECRET_KEY']}:")}",
+    :Authorization  => "Basic #{::Base64.encode64("sk_test_WMdm1KYsYXuQVj1n:")}".strip,
     :Accept         => 'application/json',
     :"Content-Type" => 'application/json'
   }
@@ -86,6 +86,11 @@ class MundipaggV1Sdk::Customer
     customer = {} if customer == nil
     postRequest(customer.to_json, "/customers")
   end
+  
+  def self.retrieve(customer_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    getRequest("/customers/#{customer_id}")
+  end
 
 end
 
@@ -95,10 +100,48 @@ class MundipaggV1Sdk::Card
 
   def self.create(card)
     card = {} if card == nil
-    postRequest(card.to_json, "/customers/#{card.customer.id}/Cancel")
+    postRequest(card.to_json, "/customers/#{card.customer.id}/cards")
+  end
+  
+  def self.retrieve(card)
+    ArgumentError.new("Card can't be nil") if charge_id == nil
+    getRequest("/customers/#{card.customer.id}/cards/#{card.id}")
   end
 
 end
+
+class MundipaggV1Sdk::Charge
+
+  extend MundipaggV1Sdk
+
+  def self.create(charge)
+    charge = {} if charge == nil
+    postRequest(charge.to_json, "/charges")
+  end
+  
+  def self.retrieve(charge_id)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    getRequest("/charges/#{charge_id}")
+  end
+
+end
+
+class MundipaggV1Sdk::Plan
+
+  extend MundipaggV1Sdk
+
+  def self.create(plan)
+    plan = {} if plan == nil
+    postRequest(plan.to_json, "/plans")
+  end
+  
+  def self.retrieve(plan_id)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    getRequest("/plans/#{plan_id}")
+  end
+
+end
+
 
 class MundipaggV1Sdk::AuthenticationError
 end
