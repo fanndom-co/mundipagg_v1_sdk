@@ -98,6 +98,39 @@ class MundipaggV1Sdk::Customer
     getRequest("/customers")
   end
 
+  def self.edit(customer_id, customer)
+    # PUT
+  end
+
+end
+
+class MundipaggV1Sdk::AccessToken
+
+  extend MundipaggV1Sdk
+
+  def self.create(customer_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    body = {}
+    postRequest(body.to_json, "/customers/#{customer_id}/access-tokens")
+  end
+
+  def self.retrieve(customer_id, access_token_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    ArgumentError.new("Access Token id should be a String") if access_token_id == nil
+    getRequest("/customers/#{customer_id}/access-tokens/#{access_token_id}")
+  end
+
+  def self.list(customer_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    getRequest("/customers/#{customer_id}/access-tokens")
+  end
+
+  def self.delete(customer_id, access_token_id)
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    ArgumentError.new("Access Token id should be a String") if access_token_id == nil
+    deleteRequest("/customers/#{customer_id}/access-tokens/#{access_token_id}")
+  end
+
 end
 
 class MundipaggV1Sdk::Card
@@ -142,6 +175,44 @@ class MundipaggV1Sdk::Charge
     getRequest("/charges/#{charge_id}")
   end
 
+  def self.list(order_id = nil, customer_id = nil, page = nil, size = nil)
+    query = []
+    query << "order_id=#{order_id}" if !order_id.nil?
+    query << "customer_id=#{customer_id}" if !customer_id.nil?
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/charges#{query.join("&")}")
+  end
+
+  def self.capture(charge_id, capture)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    capture = {} if capture == nil
+    postRequest(capture.to_json, "/charges/#{charge_id}/capture")
+  end
+
+  def self.delete(charge_id, params)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    params = {} if params == nil
+    deleteRequest(params.to_json, "/charges/#{charge_id}")
+  end
+
+  def self.edit_credit_card()
+    # PATCH
+  end
+
+  def self.edit_due_date()
+    # PATCH
+  end
+
+  def self.edit_payment_method()
+    # PATCH
+  end
+
+  def self.retry()
+    # POST
+  end
+
 end
 
 class MundipaggV1Sdk::Plan
@@ -158,6 +229,40 @@ class MundipaggV1Sdk::Plan
     getRequest("/plans/#{plan_id}")
   end
 
+  def self.list
+    # GET
+  end
+
+  def self.list_subscriptions
+    # GET
+  end
+
+  def self.edit
+    # PUT
+  end
+
+  def self.delete
+    # DELETE
+  end
+
+end
+
+class MundipaggV1Sdk::PlanItem
+
+  extend MundipaggV1Sdk
+
+  def self.include_in_plan
+    # POST
+  end
+
+  def self.edit
+    # PUT
+  end
+
+  def self.remove_from_plan
+    # DELETE
+  end
+
 end
 
 class MundipaggV1Sdk::Order
@@ -167,6 +272,55 @@ class MundipaggV1Sdk::Order
   def self.create(order)
     order = {} if order == nil
     postRequest(order.to_json, "/orders")
+  end
+
+  def self.retrieve(charge_id)
+    # ArgumentError.new("Charge id should be a String") if charge_id == nil
+    # getRequest("/charges/#{charge_id}")
+  end
+
+  def self.list(order_id = nil, customer_id = nil, page = nil, size = nil)
+    # query = []
+    # query << "order_id=#{order_id}" if !order_id.nil?
+    # query << "customer_id=#{customer_id}" if !customer_id.nil?
+    # query << "page=#{page}" if !page.nil?
+    # query << "size=#{size}" if !size.nil?
+    # query.first.prepend("?") if !query.empty?
+    # getRequest("/charges#{query.join("&")}")
+  end
+
+  def self.include_charge()
+    # POST
+  end
+
+end
+
+class MundipaggV1Sdk::OrderItem
+
+  extend MundipaggV1Sdk
+
+  def self.include_in_order(order_id, order_item)
+    ArgumentError.new("Order id should be a String") if order_id == nil
+    order_item = {} if order_item == nil
+    postRequest(order_item.to_json, "/orders/#{order_id}/items")
+  end
+
+  def self.edit(order_id, order_item_id, order_item)
+    ArgumentError.new("Order id should be a String") if order_id == nil
+    ArgumentError.new("Order Item id should be a String") if order_item_id == nil
+    order_item = {} if order_item == nil
+    patchRequest(order_item.to_json, "/orders/#{order_id}/items/#{order_item}")
+  end
+
+  def self.delete(order_id, order_item_id)
+    ArgumentError.new("Order id should be a String") if order_id == nil
+    ArgumentError.new("Order Item id should be a String") if order_item_id == nil
+    deleteRequest("/orders/#{order_id}/items/#{order_item}")
+  end
+
+  def self.delete_all_from_order(order_id)
+    ArgumentError.new("Order id should be a String") if order_id == nil
+    deleteRequest("/orders/#{order_id}/items/")
   end
 
 end
@@ -180,6 +334,33 @@ class MundipaggV1Sdk::Address
     postRequest(address.to_json, "/addresses")
   end
 
+  def self.retrieve(customer_id, address_id)
+    ArgumentError.new("Customer id should be a String") if customer == nil
+    ArgumentError.new("Address id should be a String") if address_id == nil
+    getRequest("/customers/#{customer_id}/addresses/#{address_id}")
+  end
+
+  def self.edit(customer_id, address_id, address)
+    ArgumentError.new("Customer id should be a String") if customer == nil
+    ArgumentError.new("Address id should be a String") if address_id == nil
+    address = {} if address == nil
+    putRequest(address.to_json, "/customers/#{customer_id}/addresses/#{address_id}")
+  end
+
+  def self.delete(customer_id, address_id, address)
+    ArgumentError.new("Customer id should be a String") if customer == nil
+    ArgumentError.new("Address id should be a String") if address_id == nil
+    deleteRequest("/customers/#{customer_id}/addresses/#{address_id}")
+  end
+
+  def self.list(customer_id = nil, page = nil, size = nil)
+    query = []
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/customers/#{customer_id}/addresses#{query.join("&")}")
+  end
+
 end
 
 class MundipaggV1Sdk::Subscription
@@ -189,6 +370,84 @@ class MundipaggV1Sdk::Subscription
   def self.create(subscription)
     subscription = {} if subscription nil
     postRequest(subscription.to_json, "/subscriptions")
+  end
+
+  def self.create_from_plan
+    # POST
+  end
+
+  def self.retrieve
+    # GET
+  end
+
+  def self.cancel
+    # DELETE
+  end
+
+  def self.list
+    # GET
+  end
+
+  def self.edit_credit_card
+    # PATCH
+  end
+
+  def self.edit_payment_method
+    # PATCH
+  end
+
+  def edit_billing_date
+    # PATCH
+  end
+
+end
+
+class MundipaggV1Sdk::SubscriptionItem
+
+  extend MundipaggV1Sdk
+
+  def self.include
+    # POST
+  end
+
+  def self.edit
+    # PUT
+  end
+
+  def self.remove
+    # DELETE
+  end
+
+end
+
+class MundipaggV1Sdk::SubscriptionItemUsage
+
+  extend MundipaggV1Sdk
+
+  def self.include
+    # POST
+  end
+
+  def self.remove
+    # DELETE
+  end
+
+  def self.list
+    # GET
+  end
+
+end
+
+class MundipaggV1Sdk::SubscriptionDiscount
+
+  extend MundipaggV1Sdk
+
+  def self.include_in_subscription
+    # POST
+  end
+
+  def self.remove_from_subscription
+    # DELETE
   end
 
 end
@@ -202,6 +461,18 @@ class MundipaggV1Sdk::Invoice
     ArgumentError.new("Cycle id should be a String") if cycle_id == nil
     invoice = {}
     postRequest(invoice.to_json, "/subscriptions/#{subscription_id}/cycles/#{cycle_id}/pay")
+  end
+
+  def self.cancel
+    # DELETE
+  end
+
+  def self.list
+    # GET
+  end
+
+  def self.retrieve
+    # GET
   end
 
 end
@@ -225,6 +496,14 @@ class MundipaggV1Sdk::Webhook
     ArgumentError.new("Webhook id should be a String") if hook_id == nil
     hook = {}
     postRequest(hook.to_json, "/tokens")
+  end
+
+  def self.retrieve
+    # GET
+  end
+
+  def self.list
+    # GET
   end
 
 end

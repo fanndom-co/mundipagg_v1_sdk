@@ -200,4 +200,26 @@ describe MundipaggV1Sdk do
 
   end
 
+  describe "MundipaggV1Sdk::Charge" do
+
+    before do
+      @listed_charges = MundipaggV1Sdk::Charge.list("123")
+    end
+
+    describe "MundipaggV1Sdk::Charge#list" do
+
+      context "Successful listing" do
+
+        subject { @listed_charges }
+
+        it "should exist a list of Charges" do
+          expect( !subject.nil? && subject.length > 0 ).to_not be_nil
+        end
+
+      end
+
+    end
+
+  end
+
 end
