@@ -56,30 +56,49 @@ describe MundipaggV1Sdk do
     }
   end
 
-  describe "MundipaggV1Sdk::Customer#create" do
+  describe "MundipaggV1Sdk::Customer" do
 
-    context "Failing creation" do
+    before do
+      @created_customer = MundipaggV1Sdk::Customer.create( customer )
+      @listed_customers = MundipaggV1Sdk::Customer.list
+    end
 
-      it "should not create Customer" do
-        expect{ MundipaggV1Sdk::Customer.create(nil) }.to raise_error(Exception)
+    describe "MundipaggV1Sdk::Customer#create" do
+
+      context "Failing creation" do
+
+        it "should not create Customer" do
+          expect{ MundipaggV1Sdk::Customer.create(nil) }.to raise_error(Exception)
+        end
+
+        it "should not create Customer" do
+          expect{ MundipaggV1Sdk::Customer.create(wrong_customer) }.to raise_error(Exception)
+        end
+
       end
 
-      it "should not create Customer" do
-        expect{ MundipaggV1Sdk::Customer.create(wrong_customer) }.to raise_error(Exception)
+      context "Successful creation" do
+
+        subject { @created_customer }
+
+        it "should exist a created customer" do
+          expect( subject != nil && subject["id"] != nil ).to eq(true)
+        end
+
       end
 
     end
 
-    context "Successful creation" do
+    describe "MundipaggV1Sdk::Customer#list" do
 
-      before do
-        @created_customer = MundipaggV1Sdk::Customer.create( customer )
-      end
+      context "Successful listing" do
 
-      subject { @created_customer }
+        subject { @listed_customers }
 
-      it "should exist a created customer" do
-        expect( subject != nil && subject["id"] != nil ).to eq(true)
+        it "should exist a list of Customers" do
+          expect( subject ).to_not be_nil
+        end
+
       end
 
     end

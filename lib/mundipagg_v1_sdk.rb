@@ -94,6 +94,10 @@ class MundipaggV1Sdk::Customer
     getRequest("/customers/#{customer_id}")
   end
 
+  def self.list
+    getRequest("/customers")
+  end
+
 end
 
 class MundipaggV1Sdk::Card
@@ -156,6 +160,74 @@ class MundipaggV1Sdk::Plan
 
 end
 
+class MundipaggV1Sdk::Order
+
+  extend MundipaggV1Sdk
+
+  def self.create(order)
+    order = {} if order == nil
+    postRequest(order.to_json, "/orders")
+  end
+
+end
+
+class MundipaggV1Sdk::Address
+
+  extend MundipaggV1Sdk
+
+  def self.create(address)
+    address = {} if address == nil
+    postRequest(address.to_json, "/addresses")
+  end
+
+end
+
+class MundipaggV1Sdk::Subscription
+
+  extend MundipaggV1Sdk
+
+  def self.create(subscription)
+    subscription = {} if subscription nil
+    postRequest(subscription.to_json, "/subscriptions")
+  end
+
+end
+
+class MundipaggV1Sdk::Invoice
+
+  extend MundipaggV1Sdk
+
+  def self.create(subscription_id, cycle_id)
+    ArgumentError.new("Subscription id should be a String") if subscription_id == nil
+    ArgumentError.new("Cycle id should be a String") if cycle_id == nil
+    invoice = {}
+    postRequest(invoice.to_json, "/subscriptions/#{subscription_id}/cycles/#{cycle_id}/pay")
+  end
+
+end
+
+class MundipaggV1Sdk::Token
+
+  extend MundipaggV1Sdk
+
+  def self.create(token)
+    token = {} if token nil
+    postRequest(token.to_json, "/tokens")
+  end
+
+end
+
+class MundipaggV1Sdk::Webhook
+
+  extend MundipaggV1Sdk
+
+  def self.create(hook_id)
+    ArgumentError.new("Webhook id should be a String") if hook_id == nil
+    hook = {}
+    postRequest(hook.to_json, "/tokens")
+  end
+
+end
 
 class MundipaggV1Sdk::AuthenticationError
 end
