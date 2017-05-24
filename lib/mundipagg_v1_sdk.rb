@@ -70,6 +70,22 @@ module MundipaggV1Sdk
     response
   end
 
+  # funcao get generica
+  def putRequest(payload, url)
+    begin
+      response = RestClient.put("#{@@end_point}#{url}", payload, headers=@@SERVICE_HEADERS)
+    rescue RestClient::ExceptionWithResponse => err
+      handle_error_response(err)
+      response = err.response
+    end
+
+    v = JSON.load response
+    return v["data"] if v["data"] != nil
+    return v
+  rescue JSON::ParserError => err
+    response
+  end
+
   def handle_error_response(err)
     # MundipaggV1Sdk::AuthenticationError.new
     err_response = JSON.load(err.response)
@@ -99,7 +115,9 @@ class MundipaggV1Sdk::Customer
   end
 
   def self.edit(customer_id, customer)
-    # PUT
+    ArgumentError.new("Customer id should be a String") if customer_id == nil
+    customer = {} if customer == nil
+    putRequest(customer.to_json, "/customers")
   end
 
 end
@@ -197,20 +215,28 @@ class MundipaggV1Sdk::Charge
     deleteRequest(params.to_json, "/charges/#{charge_id}")
   end
 
-  def self.edit_credit_card()
-    # PATCH
+  def self.edit_credit_card(charge_id, params)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    params = {} if params == nil
+    patchRequest(params, "/charges/#{charge_id}/credit-card")
   end
 
-  def self.edit_due_date()
-    # PATCH
+  def self.edit_due_date(charge_id, params)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    params = {} if params == nil
+    patchRequest(params, "/charges/#{charge_id}/due-date")
   end
 
-  def self.edit_payment_method()
-    # PATCH
+  def self.edit_payment_method(charge_id, params)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    params = {} if params == nil
+    patchRequest(params, "/charges/#{charge_id}/retry")
   end
 
-  def self.retry()
-    # POST
+  def self.retry(charge_id)
+    ArgumentError.new("Charge id should be a String") if charge_id == nil
+    params = {}
+    postRequest(params, "/charges/#{charge_id}/retry")
   end
 
 end
@@ -229,20 +255,32 @@ class MundipaggV1Sdk::Plan
     getRequest("/plans/#{plan_id}")
   end
 
-  def self.list
-    # GET
+  def self.list(page = nil, size = nil)
+    query = []
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/plans#{query.join("&")}")
   end
 
-  def self.list_subscriptions
-    # GET
+  def self.list_subscriptions(plan_id)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    query = []
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/plans/#{plan_id}/subscriptions#{query.join("&")}")
   end
 
-  def self.edit
-    # PUT
+  def self.edit(plan_id, plan)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    plan = {} if plan == nil
+    putRequest(plan.to_json, "/plans")
   end
 
-  def self.delete
-    # DELETE
+  def self.delete(plan_id)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    deleteRequest("/plans/#{plan_id}")
   end
 
 end
@@ -251,16 +289,23 @@ class MundipaggV1Sdk::PlanItem
 
   extend MundipaggV1Sdk
 
-  def self.include_in_plan
-    # POST
+  def self.include_in_plan(plan_id, item)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    item = {} if item == nil
+    postRequest(item.to_json, "/plans/#{plan_id}/items")
   end
 
-  def self.edit
-    # PUT
+  def self.edit(plan_id, item_id, item)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    ArgumentError.new("Item id should be a String") if item_id == nil
+    item = {} if item == nil
+    putRequest(item.to_json, "/plans/#{plan_id}/items/#{item_id}")
   end
 
-  def self.remove_from_plan
-    # DELETE
+  def self.remove_from_plan(plan_id, item_id, item)
+    ArgumentError.new("Plan id should be a String") if plan_id == nil
+    ArgumentError.new("Item id should be a String") if item_id == nil
+    deleteRequest("/plans/#{plan_id}/items/#{item_id}")
   end
 
 end
@@ -274,23 +319,23 @@ class MundipaggV1Sdk::Order
     postRequest(order.to_json, "/orders")
   end
 
-  def self.retrieve(charge_id)
-    # ArgumentError.new("Charge id should be a String") if charge_id == nil
-    # getRequest("/charges/#{charge_id}")
+  def self.retrieve(order_id)
+    ArgumentError.new("Order id should be a String") if order_id == nil
+    getRequest("/orders/#{order_id}")
   end
 
-  def self.list(order_id = nil, customer_id = nil, page = nil, size = nil)
-    # query = []
-    # query << "order_id=#{order_id}" if !order_id.nil?
-    # query << "customer_id=#{customer_id}" if !customer_id.nil?
-    # query << "page=#{page}" if !page.nil?
-    # query << "size=#{size}" if !size.nil?
-    # query.first.prepend("?") if !query.empty?
-    # getRequest("/charges#{query.join("&")}")
+  def self.list(customer_id = nil, page = nil, size = nil)
+    query = []
+    query << "customer_id=#{customer_id}" if !customer_id.nil?
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/orders#{query.join("&")}")
   end
 
-  def self.include_charge()
-    # POST
+  def self.include_charge(params)
+    params = {} if params == nil
+    postRequest(params.to_json, "/charges")
   end
 
 end
@@ -372,24 +417,41 @@ class MundipaggV1Sdk::Subscription
     postRequest(subscription.to_json, "/subscriptions")
   end
 
-  def self.create_from_plan
-    # POST
+  def self.create_from_plan(subscription)
+    ArgumentError.new("Plan id should be a String") if subscription["plan_id"] == nil
+    subscription = {} if subscription nil
+    postRequest(subscription.to_json, "/subscriptions")
   end
 
-  def self.retrieve
-    # GET
+  def self.retrieve(subscription_id)
+    ArgumentError.new("Subscription id should be a String") if subscription_id == nil
+    getRequest("/subscriptions/#{subscription_id}")
   end
 
-  def self.cancel
-    # DELETE
+  def self.cancel(subscription_id)
+    ArgumentError.new("Subscription id should be a String") if subscription_id == nil
+    deleteRequest("/subscriptions/#{subscription_id}")
   end
 
-  def self.list
-    # GET
+  def self.list(customer_id = nil, plan_id = nil, credit_card_id = nil, status = nil, next_billing_at = nil, since = nil, until = nil, page = nil, size = nil)
+    query = []
+    query << "customer_id=#{customer_id}" if !customer_id.nil?
+    query << "plan_id=#{plan_id}" if !plan_id.nil?
+    query << "credit_card_id=#{credit_card_id}" if !credit_card_id.nil?
+    query << "status=#{status}" if !status.nil?
+    query << "next_billing_at=#{next_billing_at}" if !next_billing_at.nil?
+    query << "since=#{since}" if !since.nil?
+    query << "until=#{until}" if !until.nil?
+    query << "page=#{page}" if !page.nil?
+    query << "size=#{size}" if !size.nil?
+    query.first.prepend("?") if !query.empty?
+    getRequest("/subscriptions#{query.join("&")}")
   end
 
-  def self.edit_credit_card
-    # PATCH
+  def self.edit_credit_card(subscription_id, params)
+    ArgumentError.new("Subscription id should be a String") if subscription_id == nil
+    params = {} if params nil
+    patchRequest(params.to_json, "subscriptions/#{subscription_id}/credit-card")
   end
 
   def self.edit_payment_method
