@@ -433,7 +433,7 @@ class MundipaggV1Sdk::Subscription
     deleteRequest("/subscriptions/#{subscription_id}")
   end
 
-  def self.list(customer_id = nil, plan_id = nil, credit_card_id = nil, status = nil, next_billing_at = nil, since = nil, until = nil, page = nil, size = nil)
+  def self.list(customer_id = nil, plan_id = nil, credit_card_id = nil, status = nil, next_billing_at = nil, since = nil, until_ = nil, page = nil, size = nil)
     query = []
     query << "customer_id=#{customer_id}" if !customer_id.nil?
     query << "plan_id=#{plan_id}" if !plan_id.nil?
@@ -441,7 +441,7 @@ class MundipaggV1Sdk::Subscription
     query << "status=#{status}" if !status.nil?
     query << "next_billing_at=#{next_billing_at}" if !next_billing_at.nil?
     query << "since=#{since}" if !since.nil?
-    query << "until=#{until}" if !until.nil?
+    query << "until=#{until_}" if !until_.nil?
     query << "page=#{page}" if !page.nil?
     query << "size=#{size}" if !size.nil?
     query.first.prepend("?") if !query.empty?
