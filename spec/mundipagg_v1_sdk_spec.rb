@@ -61,9 +61,10 @@ describe MundipaggV1Sdk do
     before do
       @created_customer = MundipaggV1Sdk::Customer.create( customer )
       @listed_customers = MundipaggV1Sdk::Customer.list
+      @retrieved_customer = MundipaggV1Sdk::Customer.retrieve( @created_customer["id"] )
     end
 
-    describe "MundipaggV1Sdk::Customer#create" do
+    describe "#create" do
 
       context "Failing creation" do
 
@@ -89,14 +90,28 @@ describe MundipaggV1Sdk do
 
     end
 
-    describe "MundipaggV1Sdk::Customer#list" do
+    describe "#list" do
 
       context "Successful listing" do
 
         subject { @listed_customers }
 
         it "should exist a list of Customers" do
-          expect( subject ).to_not be_nil
+          expect( subject != nil && subject.length > 0 && subject.include?( @created_customer ) ).to eq(true)
+        end
+
+      end
+
+    end
+
+    describe "#retrieve" do
+
+      context "Successful retrieval" do
+
+        subject { @retrieved_customer }
+
+        it "should exist a retrieved Customer" do
+          expect( subject != nil && subject["email"] == customer[:email] ).to eq(true)
         end
 
       end
@@ -118,7 +133,7 @@ describe MundipaggV1Sdk do
       end
     end
 
-    describe "MundipaggV1Sdk::Card#create" do
+    describe "#create" do
 
       context "Failing creation" do
 
@@ -152,7 +167,7 @@ describe MundipaggV1Sdk do
 
     end
 
-    describe "MundipaggV1Sdk::Card#retrieve" do
+    describe "#retrieve" do
 
       context "Failing retrieval" do
 
@@ -170,7 +185,7 @@ describe MundipaggV1Sdk do
 
     end
 
-    describe "MundipaggV1Sdk::Card#list" do
+    describe "#list" do
 
       context "Successful listing" do
 
@@ -184,7 +199,7 @@ describe MundipaggV1Sdk do
 
     end
 
-    describe "MundipaggV1Sdk::Card#delete" do
+    describe "#delete" do
 
       context "Successful deletion" do
 
@@ -206,7 +221,7 @@ describe MundipaggV1Sdk do
       @listed_charges = MundipaggV1Sdk::Charge.list("123")
     end
 
-    describe "MundipaggV1Sdk::Charge#list" do
+    describe "#list" do
 
       context "Successful listing" do
 
@@ -214,6 +229,55 @@ describe MundipaggV1Sdk do
 
         it "should exist a list of Charges" do
           expect( !subject.nil? && subject.length > 0 ).to_not be_nil
+        end
+
+      end
+
+    end
+
+  end
+
+  describe "MundipaggV1Sdk::Token" do
+
+    before do
+      @created_customer  = MundipaggV1Sdk::Customer.create( customer )
+      @created_card      = MundipaggV1Sdk::Card.create(@created_customer["id"], card)
+      @retrieved_card    = MundipaggV1Sdk::Card.retrieve(@created_customer["id"], @created_card["id"])
+      @listed_cards      = MundipaggV1Sdk::Card.list(@created_customer["id"])
+      @deleted_cards     = []
+      @listed_cards.each do |c|
+        @deleted_cards << MundipaggV1Sdk::Card.delete(@created_customer["id"], c["id"])
+      end
+    end
+
+    describe "#create" do
+
+      context "Failing creation" do
+
+        it "should not create Card" do
+          expect{ MundipaggV1Sdk::Card.create(nil, nil) }.to raise_error(Exception)
+        end
+
+        it "should not create Card" do
+          expect{ MundipaggV1Sdk::Card.create(nil, wrong_card) }.to raise_error(Exception)
+        end
+
+        it "should not create Card" do
+          expect{ MundipaggV1Sdk::Card.create("", wrong_card) }.to raise_error(Exception)
+        end
+
+        it "should not create Card" do
+          expect{ MundipaggV1Sdk::Card.create("", wrong_card) }.to raise_error(Exception)
+        end
+
+      end
+
+      context "Successful creation" do
+
+        subject { @created_card }
+
+        it "should exist a created Card" do
+          expect( subject != nil && subject["id"] != nil ).to eq(true)
         end
 
       end
