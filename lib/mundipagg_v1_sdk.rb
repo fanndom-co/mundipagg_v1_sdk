@@ -90,7 +90,7 @@ module MundipaggV1Sdk
     # MundipaggV1Sdk::AuthenticationError.new
     err_response = JSON.load(err.response)
     puts err_response["message"]
-    puts JSON.pretty_generate(err_response["errors"])
+    puts JSON.pretty_generate(err_response["errors"]) unless err_response["errors"].nil?
     raise(::Exception.new( err_response["message"] ))
   end
 
