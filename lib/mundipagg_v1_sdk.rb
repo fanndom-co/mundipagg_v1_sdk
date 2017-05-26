@@ -7,7 +7,7 @@ module MundipaggV1Sdk
   @@end_point = "https://api.mundipagg.com/core/v1"
 
   @@SERVICE_HEADERS = {
-    :Authorization  => "Basic #{::Base64.encode64("sk_test_WMdm1KYsYXuQVj1n:")}".strip,
+    :Authorization  => "Basic #{::Base64.encode64("#{ENV['MUNDIPAGG_SECRET_KEY']}:")}",
     :Accept         => 'application/json',
     :"Content-Type" => 'application/json'
   }
