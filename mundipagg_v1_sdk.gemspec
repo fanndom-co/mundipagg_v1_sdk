@@ -1,11 +1,11 @@
 Gem::Specification.new do |s|
   s.name        = 'mundipagg_v1'
-  s.version     = '0.0.0'
+  s.version     = '0.0.1'
   s.date        = '2017-05-19'
   s.summary     = "New mundipagg api"
   s.description = "New mundipagg api"
-  s.authors     = ["Clayton Oliveira"]
-  s.email       = 'clayton@marmotex.com'
+  s.authors     = ["Marmotex"]
+  s.email       = 'admin@marmotex.com'
   s.files       = Dir.glob("{bin,lib}/**/*{.rb}")
   s.test_files = ["spec/mundipagg_v1_sdk_spec.rb"]
   s.homepage    =
