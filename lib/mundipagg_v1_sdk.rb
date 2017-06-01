@@ -41,9 +41,10 @@ module MundipaggV1Sdk
   end
 
   # funcao de delete generica
-  def deleteRequest(url)
+  def deleteRequest(payload, url)
     begin
-      response = RestClient.delete("#{@@end_point}#{url}", headers=@@SERVICE_HEADERS)
+      response = RestClient::Request.execute(method: :delete,
+        url: "#{@@end_point}#{url}", payload: payload, headers: @@SERVICE_HEADERS)
     rescue RestClient::ExceptionWithResponse => err
       handle_error_response(err)
       response = err.response
