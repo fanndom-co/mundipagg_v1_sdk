@@ -147,7 +147,7 @@ class MundipaggV1Sdk::AccessToken
   def self.delete(customer_id, access_token_id)
     ArgumentError.new("Customer id should be a String") if customer_id == nil
     ArgumentError.new("Access Token id should be a String") if access_token_id == nil
-    deleteRequest("/customers/#{customer_id}/access-tokens/#{access_token_id}")
+    deleteRequest({}, "/customers/#{customer_id}/access-tokens/#{access_token_id}")
   end
 
 end
@@ -175,7 +175,7 @@ class MundipaggV1Sdk::Card
   def self.delete(customer_id, card_id)
     ArgumentError.new("Customer id should be a String") if customer_id == nil
     ArgumentError.new("Card id should be a String") if card_id == nil
-    deleteRequest("/customers/#{customer_id}/cards/#{card_id}")
+    deleteRequest({}, "/customers/#{customer_id}/cards/#{card_id}")
   end
 
 end
@@ -281,7 +281,7 @@ class MundipaggV1Sdk::Plan
 
   def self.delete(plan_id)
     ArgumentError.new("Plan id should be a String") if plan_id == nil
-    deleteRequest("/plans/#{plan_id}")
+    deleteRequest({}, "/plans/#{plan_id}")
   end
 
 end
@@ -306,7 +306,7 @@ class MundipaggV1Sdk::PlanItem
   def self.remove_from_plan(plan_id, item_id, item)
     ArgumentError.new("Plan id should be a String") if plan_id == nil
     ArgumentError.new("Item id should be a String") if item_id == nil
-    deleteRequest("/plans/#{plan_id}/items/#{item_id}")
+    deleteRequest({}, "/plans/#{plan_id}/items/#{item_id}")
   end
 
 end
@@ -361,12 +361,12 @@ class MundipaggV1Sdk::OrderItem
   def self.delete(order_id, order_item_id)
     ArgumentError.new("Order id should be a String") if order_id == nil
     ArgumentError.new("Order Item id should be a String") if order_item_id == nil
-    deleteRequest("/orders/#{order_id}/items/#{order_item}")
+    deleteRequest({}, "/orders/#{order_id}/items/#{order_item}")
   end
 
   def self.delete_all_from_order(order_id)
     ArgumentError.new("Order id should be a String") if order_id == nil
-    deleteRequest("/orders/#{order_id}/items/")
+    deleteRequest({}, "/orders/#{order_id}/items/")
   end
 
 end
@@ -396,7 +396,7 @@ class MundipaggV1Sdk::Address
   def self.delete(customer_id, address_id, address)
     ArgumentError.new("Customer id should be a String") if customer == nil
     ArgumentError.new("Address id should be a String") if address_id == nil
-    deleteRequest("/customers/#{customer_id}/addresses/#{address_id}")
+    deleteRequest({}, "/customers/#{customer_id}/addresses/#{address_id}")
   end
 
   def self.list(customer_id = nil, page = nil, size = nil)
@@ -431,7 +431,7 @@ class MundipaggV1Sdk::Subscription
 
   def self.cancel(subscription_id)
     ArgumentError.new("Subscription id should be a String") if subscription_id == nil
-    deleteRequest("/subscriptions/#{subscription_id}")
+    deleteRequest({}, "/subscriptions/#{subscription_id}")
   end
 
   def self.list(customer_id = nil, plan_id = nil, credit_card_id = nil, status = nil, next_billing_at = nil, since = nil, until_ = nil, page = nil, size = nil)
