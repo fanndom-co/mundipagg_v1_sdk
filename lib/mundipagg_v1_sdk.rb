@@ -16,6 +16,7 @@ module MundipaggV1Sdk
   def postRequest(payload, url)
     begin
       response = RestClient.post("#{@@end_point}#{url}", payload, headers=@@SERVICE_HEADERS)
+      handle_validation_error_response(response["last_transaction"]["gateway_response"]) if response["last_transaction"]["gateway_response"]["code"].to_i >= 400
     rescue RestClient::ExceptionWithResponse => err
       handle_error_response(err)
       response = err.response
@@ -93,6 +94,13 @@ module MundipaggV1Sdk
     puts err_response["message"]
     puts JSON.pretty_generate(err_response["errors"]) unless err_response["errors"].nil?
     raise(::Exception.new( err_response["message"] ))
+  end
+  
+  def handle_validation_error_response(err)
+    # MundipaggV1Sdk::AuthenticationError.new
+    err_response = JSON.load(err)
+    puts JSON.pretty_generate(err_response[:errors]) unless err_response[:errors].nil?
+    raise(::Exception.new( err_response[:last_transaction][:gateway_response][:errors][0][:message] ))
   end
 
 end
